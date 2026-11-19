@@ -7,6 +7,17 @@ json.cache! card do
 
   json.tags card.tags.pluck(:title).sort
 
+  json.blocked card.blocked?
+  json.blockers card.blockers, :id, :number, :title
+  json.blocked_cards card.blocked_cards, :id, :number, :title
+
+  if card.parent
+    json.parent card.parent, :id, :number, :title
+  else
+    json.parent nil
+  end
+  json.children_count card.children.size
+
   json.closed card.closed?
   json.postponed card.postponed?
   json.golden card.golden?

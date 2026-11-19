@@ -1,0 +1,47 @@
+<%# Blocking is precedence: this card waits on the cards listed here. It shares
+    one labelled "relation section" anatomy with hierarchy (_hierarchy.html.erb)
+    so both kinds of card-to-card relations read as one system. %>
+<div id="<%= dom_id(card, :blockers) %>" class="card__relations txt-small">
+  <% if card.blockers.any? || !card.closed? %>
+    <div class="card__relation">
+      <div class="card__relation-header">
+        <span class="relation__icon"><%= icon_tag "lock" %></span>
+        <h4 class="card__relation-label txt-uppercase">Blocked by</h4>
+
+        <% unless card.closed? %>
+          <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+            <button type="button" class="card__relation-add btn btn--ensure-tap-target-size" style="--btn-background: var(--card-bg-color);"
+                data-controller="tooltip" data-action="click->dialog#open:stop">
+              <%= icon_tag "add" %>
+              <span class="for-screen-reader">Add a blocker</span>
+            </button>
+
+            <dialog class="popup panel flex-column align-start justify-start fill-white shadow txt-small"
+                data-dialog-target="dialog"
+                data-action="turbo:submit-end->dialog#close">
+              <div class="flex align-start justify-space-between">
+                <strong class="popup__title">Blocked by…</strong>
+              </div>
+
+              <%= form_with url: card_dependencies_path(card),
+                    data: { controller: "form", action: "submit->form#preventEmptySubmit submit->form#preventComposingSubmit" },
+                    class: "flex flex-column gap-half full-width margin-block-half" do |form| %>
+                <%= form.text_field :blocker_number, placeholder: "Card number, e.g. 42", class: "input txt-small full-width",
+                      autocomplete: "off", autofocus: true, inputmode: "numeric",
+                      data: { form_target: "input", action: "compositionstart->form#compositionStart compositionend->form#compositionEnd" } %>
+
+                <%= form.submit "Add blocker", class: "btn popup__btn", data: { form_target: "submit" } %>
+              <% end %>
+            </dialog>
+          </div>
+        <% end %>
+      </div>
+
+      <% if card.blockers.any? %>
+        <ul class="card__relation-list min-width">
+          <%= render partial: "cards/dependencies/blocker", collection: card.blockers.includes(:closure), as: :blocker, locals: { card: card } %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+</div>

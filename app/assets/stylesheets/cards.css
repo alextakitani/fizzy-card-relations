@@ -173,6 +173,129 @@
     text-transform: uppercase;
   }
 
+  /* Board badges for card relations (see display/preview/_blockers and
+     _hierarchy). The full sections on the card perma use .card__relation*. */
+  .card__blockers,
+  .card__hierarchy {
+    color: var(--card-text-color);
+    display: flex;
+    min-inline-size: 0;
+  }
+
+  /* A child points up at its parent, so it reads as a reference rather than a
+     count of its own. */
+  .card__hierarchy--child {
+    opacity: 0.65;
+  }
+
+  /* Relations
+  /* ------------------------------------------------------------------------ */
+
+  /* Blocking ("Blocked by": precedence — this card waits on others) and
+     hierarchy ("Part of" / "Contains": containment) share one anatomy:
+     a labelled header with an add affordance, plus a list of linked cards. */
+  .card__relations {
+    --btn-color: var(--card-color);
+
+    color: var(--card-text-color);
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+
+    [data-controller="dialog"] {
+      align-items: center;
+      display: flex;
+      position: relative;
+    }
+
+    .popup {
+      --panel-size: 24ch;
+
+      inset-block-start: 100%;
+    }
+  }
+
+  .card__relation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1lh;
+    margin-block-start: calc(var(--block-space) / 2);
+  }
+
+  .card__relation-header {
+    align-items: center;
+    display: flex;
+    gap: 0.75ch;
+    min-inline-size: 0;
+  }
+
+  .card__relation-label {
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 0;
+    opacity: 0.7;
+  }
+
+  .card__relation-add {
+    font-size: 0.6em;
+  }
+
+  .card__relation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25lh;
+    list-style: none;
+    margin: 0;
+    max-inline-size: 100%;
+    /* Indent the rows so they hang under the label, past the icon chip */
+    padding-inline: calc(1.3em + 0.75ch) 0;
+  }
+
+  .card__relation-item {
+    align-items: center;
+    display: flex;
+    gap: 0.5ch;
+    justify-content: space-between;
+  }
+
+  /* A closed blocker no longer blocks: it reads like a completed step */
+  .card__relation-item--done .card__relation-link {
+    opacity: 0.7;
+    text-decoration: line-through;
+  }
+
+  .card__relation-link {
+    color: inherit;
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  /* Removing a relation only detaches two cards, but it is destructive enough
+     to keep quiet until the row is hovered — and it always asks to confirm. */
+  .card__relation-remove {
+    --btn-padding: 0.2em;
+
+    background-color: transparent;
+    border: 0;
+    opacity: 0;
+    transition: opacity 100ms ease-out;
+
+    .card__relation-item:hover &,
+    .card__relation-item:focus-within & {
+      opacity: 0.55;
+    }
+
+    &:hover,
+    &:focus-visible {
+      opacity: 1;
+    }
+
+    @media (any-hover: none) {
+      opacity: 0.55;
+    }
+  }
+
   /* Body
   /* ------------------------------------------------------------------------ */
 

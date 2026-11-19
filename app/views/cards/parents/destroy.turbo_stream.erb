@@ -1,0 +1,1 @@
+<%= turbo_stream.replace([ @card, :hierarchy ], partial: "cards/display/perma/hierarchy", method: "morph", locals: { card: @card.reload }) %>

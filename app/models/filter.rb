@@ -26,6 +26,8 @@ class Filter < ApplicationRecord
       result = result.open unless include_closed_cards?
       result = result.unassigned if assignment_status.unassigned?
       result = result.assigned_to(assignees.ids) if assignees.present?
+      result = result.unblocked if unblocked_only?
+      result = result.roots if roots_only?
       result = result.where(creator_id: creators.ids) if creators.present?
       result = filter_boards(result) if boards.present?
       result = result.tagged_with(tags.ids) if tags.present?

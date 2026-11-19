@@ -119,6 +119,8 @@ Rails.application.routes.draw do
 
       resources :assignments
       resource :self_assignment, only: :create
+      resources :dependencies, only: [ :create, :destroy ]
+      resource :parent, only: [ :create, :destroy ]
       resources :steps
       resources :taggings
 

@@ -1,0 +1,20 @@
+<%# A parent shows how many children it contains; a child shows which card it
+    is part of. Without the second case the board only reveals hierarchy from
+    the top, and a ticket looks unattached until you open it. %>
+<% if card.children.any? %>
+  <div class="card__hierarchy align-center gap-half flex-item-justify-end flex-item-no-shrink"
+      title="<%= "Contains #{pluralize(card.children.size, "card")}" %>">
+    <span class="hierarchy__icon">
+      <%= icon_tag "grid" %>
+    </span>
+    <strong><%= card.children.size %></strong>
+  </div>
+<% elsif card.parent %>
+  <div class="card__hierarchy card__hierarchy--child align-center gap-half flex-item-justify-end flex-item-no-shrink"
+      title="<%= "Part of ##{card.parent.number} #{card.parent.title}" %>">
+    <span class="hierarchy__icon">
+      <%= icon_tag "grid" %>
+    </span>
+    <strong>#<%= card.parent.number %></strong>
+  </div>
+<% end %>

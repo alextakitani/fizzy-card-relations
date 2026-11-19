@@ -1,0 +1,76 @@
+<%# Hierarchy is containment: "Part of" points up at the card's parent,
+    "Contains" lists its children. Same relation-section anatomy as blocking
+    (_blockers.html.erb) so both relations read as one system. %>
+<div id="<%= dom_id(card, :hierarchy) %>" class="card__relations txt-small">
+  <% if card.parent || !card.closed? %>
+    <div class="card__relation">
+      <div class="card__relation-header">
+        <span class="relation__icon"><%= icon_tag "grid" %></span>
+        <h4 class="card__relation-label txt-uppercase">Part of</h4>
+
+        <% if card.parent.nil? && !card.closed? %>
+          <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+            <button type="button" class="card__relation-add btn btn--ensure-tap-target-size" style="--btn-background: var(--card-bg-color);"
+                data-controller="tooltip" data-action="click->dialog#open:stop">
+              <%= icon_tag "add" %>
+              <span class="for-screen-reader">Set a parent</span>
+            </button>
+
+            <dialog class="popup panel flex-column align-start justify-start fill-white shadow txt-small"
+                data-dialog-target="dialog"
+                data-action="turbo:submit-end->dialog#close">
+              <div class="flex align-start justify-space-between">
+                <strong class="popup__title">Parent…</strong>
+              </div>
+
+              <%= form_with url: card_parent_path(card),
+                    data: { controller: "form", action: "submit->form#preventEmptySubmit submit->form#preventComposingSubmit" },
+                    class: "flex flex-column gap-half full-width margin-block-half" do |form| %>
+                <%= form.text_field :parent_number, placeholder: "Card number, e.g. 42", class: "input txt-small full-width",
+                      autocomplete: "off", autofocus: true, inputmode: "numeric",
+                      data: { form_target: "input", action: "compositionstart->form#compositionStart compositionend->form#compositionEnd" } %>
+
+                <%= form.submit "Set parent", class: "btn popup__btn", data: { form_target: "submit" } %>
+              <% end %>
+            </dialog>
+          </div>
+        <% end %>
+      </div>
+
+      <% if card.parent %>
+        <ul class="card__relation-list min-width">
+          <li class="card__relation-item">
+            <%= link_to card_path(card.parent), class: "card__relation-link overflow-ellipsis flex-item-grow" do %>
+              <span class="txt-uppercase translucent">#<%= card.parent.number %></span>
+              <%= card.parent.title %>
+            <% end %>
+
+            <% unless card.closed? %>
+              <%= button_to card_parent_path(card), method: :delete,
+                    class: "btn card__relation-remove", form_class: "flex-item-no-shrink",
+                    data: { controller: "tooltip",
+                            turbo_confirm: "Remove ##{card.parent.number} as this card's parent? Neither card is deleted." } do %>
+                <%= icon_tag "close", style: "--icon-size: 0.75em" %>
+                <span class="for-screen-reader">Remove parent #<%= card.parent.number %></span>
+              <% end %>
+            <% end %>
+          </li>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if card.children.any? %>
+    <div class="card__relation">
+      <div class="card__relation-header">
+        <span class="relation__icon"><%= icon_tag "grid" %></span>
+        <h4 class="card__relation-label txt-uppercase">Contains</h4>
+        <span class="translucent"><%= card.children.size %></span>
+      </div>
+
+      <ul class="card__relation-list min-width">
+        <%= render partial: "cards/display/perma/child", collection: card.children, as: :child %>
+      </ul>
+    </div>
+  <% end %>
+</div>

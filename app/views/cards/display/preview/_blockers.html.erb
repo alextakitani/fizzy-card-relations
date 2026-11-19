@@ -1,0 +1,10 @@
+<% if card.blocked? %>
+  <% open_blockers = card.blockers.open.count %>
+  <div class="card__blockers align-center gap-half flex-item-justify-end flex-item-no-shrink"
+      title="<%= "Blocked by #{pluralize(open_blockers, "open card")}" %>">
+    <span class="blockers__icon">
+      <%= icon_tag "lock" %>
+    </span>
+    <strong><%= open_blockers %></strong>
+  </div>
+<% end %>

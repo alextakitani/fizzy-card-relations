@@ -189,6 +189,32 @@ class FilterTest < ActiveSupport::TestCase
     assert_equal [ cards(:logo), cards(:layout), cards(:text) ].sort_by(&:id), filter.cards.to_a.sort_by(&:id)
   end
 
+  test "unblocked only filters out cards with an open blocker" do
+    cards(:logo).block(cards(:layout))
+
+    filter = users(:david).filters.new(unblocked_only: true, board_ids: [ boards(:writebook).id ])
+
+    assert_not_includes filter.cards, cards(:logo)
+    assert_includes filter.cards, cards(:layout)
+  end
+
+  test "unblocked only includes cards whose blocker is closed" do
+    cards(:logo).block(cards(:shipping))
+
+    filter = users(:david).filters.new(unblocked_only: true, board_ids: [ boards(:writebook).id ])
+
+    assert_includes filter.cards, cards(:logo)
+  end
+
+  test "roots only filters out cards with a parent" do
+    cards(:logo).update!(parent: cards(:layout))
+
+    filter = users(:david).filters.new(roots_only: true, board_ids: [ boards(:writebook).id ])
+
+    assert_not_includes filter.cards, cards(:logo)
+    assert_includes filter.cards, cards(:layout)
+  end
+
   test "board titles are scoped to creator's account" do
     # Give mike (initech) access to the board in his account
     boards(:miltons_wish_list).accesses.grant_to(users(:mike))

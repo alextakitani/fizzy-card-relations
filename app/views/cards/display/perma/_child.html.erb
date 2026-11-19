@@ -1,0 +1,6 @@
+<li class="card__relation-item">
+  <%= link_to card_path(child), class: "card__relation-link overflow-ellipsis flex-item-grow" do %>
+    <span class="txt-uppercase translucent">#<%= child.number %></span>
+    <%= child.title %>
+  <% end %>
+</li>

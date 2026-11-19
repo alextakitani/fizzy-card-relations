@@ -7,6 +7,8 @@ module Filter::Params
     :sorted_by,
     :creation,
     :closure,
+    :unblocked_only,
+    :roots_only,
     card_ids: [],
     column_ids: [],
     assignee_ids: [],
@@ -44,7 +46,7 @@ module Filter::Params
   def used?(ignore_boards: false)
     tags.any? || assignees.any? || creators.any? || closers.any? ||
       terms.any? || card_ids&.any? || (!ignore_boards && boards.present?) ||
-      assignment_status.unassigned? || !indexed_by.all? || !sorted_by.latest?
+      assignment_status.unassigned? || !indexed_by.all? || !sorted_by.latest? || unblocked_only? || roots_only?
   end
 
   # +as_params+ uses `resource#ids` instead of `#resource_ids`
@@ -56,6 +58,8 @@ module Filter::Params
       params[:creation]          = creation
       params[:closure]           = closure
       params[:assignment_status] = assignment_status
+      params[:unblocked_only]    = unblocked_only?
+      params[:roots_only]        = roots_only?
       params[:terms]             = terms
       params[:tag_ids]           = tags.ids
       params[:board_ids]    = boards.ids

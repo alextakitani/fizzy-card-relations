@@ -54,7 +54,10 @@
     padding: 0;
   }
 
-  .steps__icon {
+  .steps__icon,
+  .blockers__icon,
+  .hierarchy__icon,
+  .relation__icon {
     --icon-size: 0.875em;
 
     background-color: var(--card-color);

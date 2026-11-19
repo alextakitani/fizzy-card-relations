@@ -575,6 +575,13 @@
       display: flex;
     }
 
+    .card__blockers,
+    .card__hierarchy {
+      --column-gap: 0.8ch;
+
+      display: flex;
+    }
+
     .card__tags {
       gap: calc(var(--card-header-space) / 2);
     }

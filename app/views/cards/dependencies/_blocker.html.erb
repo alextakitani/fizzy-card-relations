@@ -1,0 +1,17 @@
+<%# A closed blocker no longer blocks, so it reads like a completed step. %>
+<li class="card__relation-item <%= "card__relation-item--done" if blocker.closed? %>" id="<%= dom_id(blocker, :blocker) %>">
+  <%= link_to card_path(blocker), class: "card__relation-link overflow-ellipsis flex-item-grow" do %>
+    <span class="txt-uppercase translucent">#<%= blocker.number %></span>
+    <%= blocker.title %>
+  <% end %>
+
+  <% unless card.closed? %>
+    <%= button_to card_dependency_path(card, blocker), method: :delete,
+          class: "btn card__relation-remove", form_class: "flex-item-no-shrink",
+          data: { controller: "tooltip",
+                  turbo_confirm: "Remove ##{blocker.number} as a blocker? Neither card is deleted." } do %>
+      <%= icon_tag "close", style: "--icon-size: 0.75em" %>
+      <span class="for-screen-reader">Remove blocker #<%= blocker.number %></span>
+    <% end %>
+  <% end %>
+</li>
